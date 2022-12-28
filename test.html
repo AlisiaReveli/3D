@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+</head>
+<body>
+    <script>
+
+        const scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+        var renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+    var box = new THREE.Mesh(new THREE.BoxGeometry(100, 90, 100, 100, 10, 100), new THREE.MeshBasicMaterial({
+        color: "pink",
+        wireframe: true
+    }));
+
+    box.geometry.translate(0, 50, -5);
+
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(-1, 50, 16), new THREE.MeshBasicMaterial({ color: "pink" }));
+   sphere.position.set(0, 5, 1)
+
+    camera.lookAt(sphere)
+    scene.add(box);
+    scene.add(sphere);
+
+    var speedTrans = 5;
+        var speedRot = THREE.Math.degToRad(45);
+        var clock = new THREE.Clock();
+        var delta = 0;
+        var camHolder = new THREE.Group();
+        var sphereCamHolder = new THREE.Group();
+        camHolder.add(camera);
+        camHolder.position.set(0, 10, 20);
+        scene.add(camHolder);
+        sphere.add(sphereCamHolder);
+        document.addEventListener('keydown', function (evt) {
+
+            //w
+            if (evt.keyCode === 87) {
+                camHolder.translateZ(-speedTrans * delta);
+            } // w fast vorward
+            //s
+            if (evt.keyCode === 83) {
+                camHolder.translateZ(speedTrans * delta);
+            } // s backward a little slower
+            //a
+            if (evt.keyCode === 65) {
+                camHolder.translateX(-speedTrans * delta);
+                sphere.translate()
+            } // a slowly leftwards
+            //d
+            if (evt.keyCode === 68) {
+                camHolder.translateX(speedTrans * delta);
+            } // d slowly rightwards
+             //l   
+            if (evt.keyCode === 76) {
+                camHolder.rotateY(speedRot * delta);
+            } // l turn to the left
+            //r
+            if (evt.keyCode === 82) {
+                camHolder.rotateY(-speedRot * delta);
+            } // r turn to the right
+            //t
+            if (evt.keyCode === 84) {
+                camHolder.translateY(speedTrans * delta);
+            } // t upstretch
+            if (evt.keyCode === 66) {
+                camHolder.translateY(-speedTrans * delta);
+            } // b bend down
+            if (evt.keyCode === 38) {
+               const a = sphere.position.distanceTo(box.position)
+               console.log(a);
+               if(a<6){
+                console.log('a')
+                sphere.translateY(speedTrans * 0.3)}
+            }else{
+                console.log('b')
+                sphere.translateY(speedTrans * -0.3)
+            } // up arrow, looking higher
+            if (evt.keyCode === 40) {
+                sphere.translateY(speedTrans * -0.3)
+                // box.translateY(speedTrans * 0.2)
+            } // down arrow, looking deeper
+
+        });
+
+    
+     render();
+
+        function render() {
+            requestAnimationFrame(render);
+            delta = clock.getDelta();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+
+</html>
